@@ -5,6 +5,8 @@ import { Poppins } from 'next/font/google';
 import Image from 'next/image';
 import Link from 'next/link';
 import logo from '/public/images/logo.png';
+import { useRouter } from 'next/navigation';
+
 
 const poppins = Poppins({ subsets: ['latin'], weight: ['400', '600', '700'] });
 
@@ -30,29 +32,49 @@ export default function ChatPage() {
     };
 
     const saveCurrentChat = () => {
-        if (messages.length === 0) return false;
-        const hasUserMessage = messages.some(m => m.sender === 'user');
-        if (!hasUserMessage) return false;
-        const existingChat = [...messages]; // full objects: {sender, text}
-        const isDuplicate = savedChats.some(chat => chat.join('') === existingChat.join(''));
+        // Find user messages (sent by 'user')
+        const userMessages = messages.filter(m => m.sender === 'user');
+
+        // ✅ Strict check: if no user message, do nothing
+        if (userMessages.length === 0) return;
+
+        const newChat = [...messages]; // Save the full objects, not strings
+        const isDuplicate = savedChats.some(chat =>
+            JSON.stringify(chat) === JSON.stringify(newChat)
+        );
+
         if (!isDuplicate) {
-            setSavedChats([...savedChats, existingChat]);
+            setSavedChats([...savedChats, newChat]);
+            setMessages([{ sender: 'bot', text: 'Hi! I’m your HR assistant. How can I help you today?' }]);
         }
-        return true;
     };
+
+
 
     const startNewChat = () => {
-        if (messages.length > 0) {
+        // Check if there are any user messages
+        const userMessages = messages.filter(m => m.sender === 'user');
+        if (userMessages.length > 0) {
             setSavedChats(prev => [...prev, [...messages]]);
         }
+        // Always reset messages
         setMessages([{ sender: 'bot', text: 'Hi! I’m your HR assistant. How can I help you today?' }]);
     };
-
-
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+
+    // Handle logout logic
+    const router = useRouter();
+
+    const handleLogout = () => {
+        // Clear any authentication/session logic here if needed
+        // Example: localStorage.clear(); (or) localStorage.removeItem('token');
+
+        router.push('/'); // Redirect to home page
+    };
+
 
 
     return (
@@ -82,22 +104,29 @@ export default function ChatPage() {
                             <Link href="/profile" onClick={() => setMenuOpen(false)}>
                                 <div className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#1f2937] hover:text-[#FEE715] cursor-pointer">My Profile</div>
                             </Link>
-                            <Link href="/files" onClick={() => setMenuOpen(false)}>
+                            <Link href="/documents" onClick={() => setMenuOpen(false)}>
                                 <div className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#1f2937] hover:text-[#FEE715] cursor-pointer">Files</div>
                             </Link>
                             <Link href="/tickets" onClick={() => setMenuOpen(false)}>
                                 <div className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#1f2937] hover:text-[#FEE715] cursor-pointer">Tickets</div>
                             </Link>
-                            <Link href="/logout" onClick={() => setMenuOpen(false)}>
-                                <div className="block px-4 py-2 text-sm text-red-400 hover:bg-[#1f2937] hover:text-red-500 cursor-pointer">Logout</div>
-                            </Link>
+                            <div
+                                onClick={() => {
+                                    setMenuOpen(false);
+                                    handleLogout();
+                                }}
+                                className="block px-4 py-2 text-sm text-red-400 hover:bg-[#1f2937] hover:text-red-500 cursor-pointer"
+                            >
+                                Logout
+                            </div>
+
                         </div>
                     )}
                 </div>
             </nav>
 
             {/* Sidebar */}
-            <aside className={`fixed top-0 left-0 h-full bg-[#101820] w-64 z-30 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <aside className={`fixed top-0 left-0 h-full bg-[#101820] w-64 z-30 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} flex flex-col`}>
                 <div className="px-4 py-1 font-normal border-white/10 flex justify-between items-center">
                     <span>Saved Chats</span>
                     <button
@@ -108,7 +137,9 @@ export default function ChatPage() {
                         +
                     </button>
                 </div>
-                <ul className="flex-1 p-4 overflow-y-auto space-y-2">
+
+                {/* Scrollable area */}
+                <ul className="flex-1 p-4 overflow-y-auto space-y-2 scrollbar-hide">
                     {savedChats.map((chat, idx) => (
                         <li
                             key={idx}
@@ -126,7 +157,6 @@ export default function ChatPage() {
                         </li>
                     ))}
                 </ul>
-
             </aside>
 
 
