@@ -34,8 +34,8 @@ export default function LoginPage() {
   return (
     <main className={`relative min-h-screen bg-gradient-to-bl from-[#101828] to-[#101828] text-white flex items-center justify-center ${poppins.className}`}>
       {/* Glowing Background Blobs */}
-      <div className="absolute top-[30%] left-[10%] w-[250px] h-[250px] bg-[#27B4E4] opacity-60 rounded-full z-0" style={{ filter: "blur(180px)" }} />
-      <div className="absolute top-[60%] left-[50%] w-[250px] h-[250px] bg-[#B733E3] opacity-50 rounded-full z-0" style={{ filter: "blur(180px)" }} />
+      <div className="absolute top-[30%] left-[10%] w-[250px] h-[250px] bg-[#05BAF7FF] opacity-60 rounded-full z-0" style={{ filter: "blur(180px)" }} />
+      <div className="absolute top-[60%] left-[50%] w-[250px] h-[250px] bg-[#A006D4FF] opacity-50 rounded-full z-0" style={{ filter: "blur(180px)" }} />
 
       {/* Content */}
       <div className="relative z-10 bg-black/60 rounded-xl shadow-lg flex w-full max-w-5xl overflow-hidden">
@@ -44,7 +44,7 @@ export default function LoginPage() {
 
 
           <Link href="/">
-            <img src="assets/logo.png" alt="Logo" width={100} height={100} className="cursor-pointer" />
+            <img src="assets/logo.png" alt="Logo" width={150} height={150} className="cursor-pointer" />
           </Link>
 
           <h1 className="text-4xl font-extrabold mt-8">HR_APP<span className="text-[#FEE715]">&gt;</span></h1>

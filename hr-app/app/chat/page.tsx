@@ -1,7 +1,6 @@
-// app/chat/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Poppins } from 'next/font/google';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -11,11 +10,14 @@ const poppins = Poppins({ subsets: ['latin'], weight: ['400', '600', '700'] });
 
 export default function ChatPage() {
     const [messages, setMessages] = useState([
-        { sender: 'bot', text: 'Hi! I’m your HR assistant. How can I help you today?' }
+        { sender: 'bot', text: 'Hi! I’m your HR assistant. How can I help you today?' },
     ]);
     const [input, setInput] = useState('');
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [savedChats, setSavedChats] = useState<string[][]>([]);
+    const [savedChats, setSavedChats] = useState<{ sender: string; text: string }[][]>([]);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const bottomRef = useRef<HTMLDivElement>(null); // New ref
+
 
     const sendMessage = () => {
         if (!input.trim()) return;
@@ -28,97 +30,154 @@ export default function ChatPage() {
     };
 
     const saveCurrentChat = () => {
-        if (messages.length === 0) return;
-      
-        // Ensure the user has actually said something
+        if (messages.length === 0) return false;
         const hasUserMessage = messages.some(m => m.sender === 'user');
-        if (!hasUserMessage) return;
-      
-        const existingChat = messages.map(m => `${m.sender}: ${m.text}`);
+        if (!hasUserMessage) return false;
+        const existingChat = [...messages]; // full objects: {sender, text}
         const isDuplicate = savedChats.some(chat => chat.join('') === existingChat.join(''));
-      
         if (!isDuplicate) {
-          setSavedChats([...savedChats, existingChat]);
-          setMessages([
-            { sender: 'bot', text: 'Hi! I’m your HR assistant. How can I help you today?' }
-          ]);
+            setSavedChats([...savedChats, existingChat]);
         }
-      };
-
-    const startNewChat = () => {
-        saveCurrentChat();
-        setMessages([
-            { sender: 'bot', text: 'Hi! I’m your HR assistant. How can I help you today?' }
-        ]);
+        return true;
     };
 
+    const startNewChat = () => {
+        if (messages.length > 0) {
+            setSavedChats(prev => [...prev, [...messages]]);
+        }
+        setMessages([{ sender: 'bot', text: 'Hi! I’m your HR assistant. How can I help you today?' }]);
+    };
+
+
+
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+
+
     return (
-        <main
-            className={`relative min-h-screen bg-gradient-to-bl from-[#101820] to-[#101820] text-white flex ${poppins.className}`}
-        >
+        <main className="relative overflow-hidden h-screen bg-gradient-to-bl from-[#101820] to-[#101820] text-white flex flex-col ${poppins.className}">
+
+            {/* Blobs */}
+            <div className="absolute w-[200px] h-[200px] bg-[#0EA1D2FF] opacity-100 rounded-full z-0" style={{ top: "50%", left: "10%", filter: "blur(250px)" }} />
+            <div className="absolute w-[200px] h-[200px] bg-[#B733E3FF] opacity-100 rounded-full z-0" style={{ top: "30%", left: "50%", filter: "blur(250px)" }} />
+
+            {/* Navbar */}
+            <nav className="fixed top-0 left-0 right-0 z-20 bg-transparent px-6 py-4 flex justify-end">
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setMenuOpen(!menuOpen)}
+                        className="flex items-center gap-2 text-gray-300 hover:text-[#FEE715] transition focus:outline-none relative"
+                    >
+                        <img src="/assets/user.png" alt="Profile" className="w-10 h-10 rounded-full object-cover border-2 border-white/20" />
+                        <span className="hidden sm:inline text-base font-medium">My Profile</span>
+                        <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    {/* Dropdown */}
+                    {menuOpen && (
+                        <div className="absolute right-0 top-12 mt-2 w-40 bg-[#101828] border border-white/10 rounded-md shadow-lg overflow-hidden animate-dropdown">
+                            <Link href="/profile" onClick={() => setMenuOpen(false)}>
+                                <div className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#1f2937] hover:text-[#FEE715] cursor-pointer">My Profile</div>
+                            </Link>
+                            <Link href="/files" onClick={() => setMenuOpen(false)}>
+                                <div className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#1f2937] hover:text-[#FEE715] cursor-pointer">Files</div>
+                            </Link>
+                            <Link href="/tickets" onClick={() => setMenuOpen(false)}>
+                                <div className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#1f2937] hover:text-[#FEE715] cursor-pointer">Tickets</div>
+                            </Link>
+                            <Link href="/logout" onClick={() => setMenuOpen(false)}>
+                                <div className="block px-4 py-2 text-sm text-red-400 hover:bg-[#1f2937] hover:text-red-500 cursor-pointer">Logout</div>
+                            </Link>
+                        </div>
+                    )}
+                </div>
+            </nav>
+
             {/* Sidebar */}
-            <aside className={`fixed top-0 left-0 h-full bg-[#101820] w-64 z-20 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="p-4 font-bold border-b border-white/10 flex justify-between items-center">
+            <aside className={`fixed top-0 left-0 h-full bg-[#101820] w-64 z-30 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <div className="px-4 py-1 font-normal border-white/10 flex justify-between items-center">
                     <span>Saved Chats</span>
                     <button
                         onClick={startNewChat}
-                        className="text-[#FEE715] text-lg font-bold hover:scale-110 transition"
+                        className="text-[#FEE715] text-[35px] font-thin cursor-pointer transition"
                         title="Start new chat"
                     >
                         +
                     </button>
                 </div>
-                <ul className="p-4 space-y-2 overflow-y-auto max-h-[calc(100%-60px)]">
+                <ul className="flex-1 p-4 overflow-y-auto space-y-2">
                     {savedChats.map((chat, idx) => (
-                        <li key={idx} className="bg-white/10 p-2 rounded text-sm text-gray-300">
+                        <li
+                            key={idx}
+                            onClick={() => setMessages(chat)}
+                            className="bg-white/10 p-2 rounded text-sm text-gray-300 cursor-pointer hover:bg-white/20 transition"
+                        >
                             {chat.slice(0, 2).map((line, i) => (
-                                <div key={i}>{line}</div>
+                                <div key={i}>
+                                    <strong>{line.sender === 'user' ? 'You' : 'Bot'}:</strong> {line.text}
+                                </div>
                             ))}
+                            {chat.length > 2 && (
+                                <div className="text-xs opacity-50">+ {chat.length - 2} more...</div>
+                            )}
                         </li>
                     ))}
                 </ul>
+
             </aside>
-            {/*The right side panel*/}
-            <div className="flex-1 flex flex-col min-h-screen ml-0 md:ml-64">
-                {/* Blobs */}
-                <div className="absolute w-[200px] h-[200px] bg-[#27B4E4FF] opacity-100 rounded-full z-0" style={{ top: "50%", left: "10%", filter: "blur(250px)" }} />
-                <div className="absolute w-[200px] h-[200px] bg-[#B733E3FF] opacity-100 rounded-full z-0" style={{ top: "30%", left: "50%", filter: "blur(250px)" }} />
 
-                {/* Top Navigation bar */}
-                <nav className="relative z-10 flex justify-between items-center px-6 py-4">
-                    <div className="flex items-center gap-2">
-                    </div>
-                    <Link href="/" className="text-sm text-gray-300 hover:text-[#FEE715]">Log out</Link>
-                </nav>
 
-                {/* Chat Window */}
-                <div className="relative z-10 flex-1 overflow-y-auto px-6 py-4 space-y-4 max-w-3xl mx-auto w-full max-h-[75vh]">
+
+            {/* Main Panel */}
+            <div className="flex flex-1 flex-col ml-0 md:ml-64 pt-24 relative z-10">
+                {/* Chat Area */}
+                <div className="relative z-10 flex-1 overflow-y-scroll px-6 pt-24 space-y-4 max-w-3xl mx-auto w-full max-h-[80vh] scrollbar-hide">
                     {messages.map((msg, i) => (
                         <div
                             key={i}
-                            className={`p-3 max-w-[80%] rounded-lg ${msg.sender === 'user'
-                                ? 'ml-auto bg-[#FEE715] text-black'
-                                : 'mr-auto bg-white/10 text-white'
-                                }`}
+                            className={`p-3 max-w-[90%] rounded-lg ${msg.sender === 'user' ? 'ml-auto bg-[#FEE715] text-black' : 'mr-auto bg-white/10 text-white'}`}
                         >
                             {msg.text}
                         </div>
                     ))}
+                    <div ref={bottomRef} />
                 </div>
 
-                {/* Input */}
-                <div className="relative z-10 px-6 py-4 border-t border-white/10">
-                    <div className="max-w-3xl mx-auto flex gap-4">
+                {/* Chat Input */}
+                <div className="relative z-10 px-6 py-4 mt-auto">
+                    <div className="max-w-3xl mx-auto flex items-center gap-4">
+                        {/* Attachment Icon */}
+                        <label className="cursor-pointer text-white hover:text-[#FEE715] transition">
+                            <input
+                                type="file"
+                                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                                className="hidden"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) console.log('Uploaded file:', file.name);
+                                }}
+                            />
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16.5 12v6a4.5 4.5 0 01-9 0V6a3 3 0 016 0v9a1.5 1.5 0 01-3 0V7" />
+                            </svg>
+                        </label>
+
+                        {/* Input Box */}
                         <input
                             type="text"
-                            className="flex-1 bg-white/10 text-white px-4 py-2 rounded-md focus:outline-none"
+                            className="flex-1 bg-white/10 text-white px-6 py-3 rounded-full focus:outline-none"
                             placeholder="Ask something about leave, travel, or documents..."
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
                         />
+
+                        {/* Send Button */}
                         <button
-                            className="bg-[#FEE715] text-[#101820] px-4 py-2 rounded-md font-bold hover:bg-yellow-400 transition"
+                            className="bg-[#FEE715] text-[#101820] px-6 py-3 rounded-full font-bold hover:bg-yellow-400 transition"
                             onClick={sendMessage}
                         >
                             Send

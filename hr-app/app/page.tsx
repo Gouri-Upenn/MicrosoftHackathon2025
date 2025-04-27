@@ -15,7 +15,7 @@ export default function Home() {
       {/* Top Nav */}
       <nav className="relative z-10 flex justify-between items-center px-8 py-0 text-md font-medium">
         <div className="flex items-center gap-1">
-          <img src="assets/logo.png" alt="Logo" width={150} height={150} />
+          <img src="assets/logo.png" alt="Logo" width={120} height={120} />
         </div>
 
         <div className="flex gap-8">
@@ -29,12 +29,12 @@ export default function Home() {
       <section className="relative z-10 flex flex-col items-center justify-center text-center px-4 py-6 flex-grow">
         <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mt-8 text-center">
           <div>Welcome to <span className="text-[#FEE715]">HR_APP</span>.</div>
-          <div className="font-medium">Empower your team with instant</div>
-          <div className="font-medium">access to your company’s knowledge.</div>
+          <div className="font-medium">Empower your team with </div>
+          <div className="font-medium">your company’s knowledge.</div>
         </h1>
 
         <p className="mt-6 text-lg text-gray-400 max-w-2xl">
-          No more digging through handbooks — just ask, and get answers. Your AI-powered assistant for employees, managers, and HR teams.
+          No more digging through handbooks — just ask, and get answers.
         </p>
 
         <div>
