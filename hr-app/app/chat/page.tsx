@@ -1,5 +1,5 @@
 'use client';
-
+{/*/app/chat/page.tsx*/}
 import { useState, useEffect, useRef } from 'react';
 import { Poppins } from 'next/font/google';
 import Image from 'next/image';
@@ -35,7 +35,7 @@ export default function ChatPage() {
         // Find user messages (sent by 'user')
         const userMessages = messages.filter(m => m.sender === 'user');
 
-        // ✅ Strict check: if no user message, do nothing
+        // Strict check: if no user message, do nothing
         if (userMessages.length === 0) return;
 
         const newChat = [...messages]; // Save the full objects, not strings
@@ -79,54 +79,18 @@ export default function ChatPage() {
 
     return (
         <main className="relative overflow-hidden h-screen bg-gradient-to-bl from-[#101820] to-[#101820] text-white flex flex-col ${poppins.className}">
+        {/* <main className={`relative flex flex-col overflow-hidden bg-transparent ${poppins.className}`}>*/}
 
             {/* Blobs */}
-            <div className="absolute w-[200px] h-[200px] bg-[#0EA1D2FF] opacity-100 rounded-full z-0" style={{ top: "50%", left: "10%", filter: "blur(250px)" }} />
-            <div className="absolute w-[200px] h-[200px] bg-[#B733E3FF] opacity-100 rounded-full z-0" style={{ top: "30%", left: "50%", filter: "blur(250px)" }} />
+            {/* <div className="absolute w-[200px] h-[200px] bg-[#0EA1D2FF] opacity-100 rounded-full z-0" style={{ top: "50%", left: "10%", filter: "blur(250px)" }} />
+            <div className="absolute w-[200px] h-[200px] bg-[#B733E3FF] opacity-100 rounded-full z-0" style={{ top: "30%", left: "50%", filter: "blur(250px)" }} /> */}
 
-            {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-20 bg-transparent px-6 py-4 flex justify-end">
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => setMenuOpen(!menuOpen)}
-                        className="flex items-center gap-2 text-gray-300 hover:text-[#FEE715] transition focus:outline-none relative"
-                    >
-                        <img src="/assets/user.png" alt="Profile" className="w-10 h-10 rounded-full object-cover border-2 border-white/20" />
-                        <span className="hidden sm:inline text-base font-medium">My Profile</span>
-                        <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-
-                    {/* Dropdown */}
-                    {menuOpen && (
-                        <div className="absolute right-0 top-12 mt-2 w-40 bg-[#101828] border border-white/10 rounded-md shadow-lg overflow-hidden animate-dropdown">
-                            <Link href="/profile" onClick={() => setMenuOpen(false)}>
-                                <div className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#1f2937] hover:text-[#FEE715] cursor-pointer">My Profile</div>
-                            </Link>
-                            <Link href="/documents" onClick={() => setMenuOpen(false)}>
-                                <div className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#1f2937] hover:text-[#FEE715] cursor-pointer">Files</div>
-                            </Link>
-                            <Link href="/tickets" onClick={() => setMenuOpen(false)}>
-                                <div className="block px-4 py-2 text-sm text-gray-300 hover:bg-[#1f2937] hover:text-[#FEE715] cursor-pointer">Tickets</div>
-                            </Link>
-                            <div
-                                onClick={() => {
-                                    setMenuOpen(false);
-                                    handleLogout();
-                                }}
-                                className="block px-4 py-2 text-sm text-red-400 hover:bg-[#1f2937] hover:text-red-500 cursor-pointer"
-                            >
-                                Logout
-                            </div>
-
-                        </div>
-                    )}
-                </div>
-            </nav>
+            {/*  */}
 
             {/* Sidebar */}
-            <aside className={`fixed top-0 left-0 h-full bg-[#101820] w-64 z-30 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} flex flex-col`}>
+            {/* <aside className={`fixed top-0 left-0 h-full bg-[#101820] w-64 z-30 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} flex flex-col`}> */}
+            <aside className="fixed top-0 left-0 h-full w-64 z-30 bg-black/60 backdrop-blur-md text-white flex flex-col">
+
                 <div className="px-4 py-1 font-normal border-white/10 flex justify-between items-center">
                     <span>Saved Chats</span>
                     <button
@@ -162,7 +126,7 @@ export default function ChatPage() {
 
 
             {/* Main Panel */}
-            <div className="flex flex-1 flex-col ml-0 md:ml-64 pt-24 relative z-10">
+            <div className="flex flex-1 flex-col ml-0 md:ml-64 relative z-10">
                 {/* Chat Area */}
                 <div className="relative z-10 flex-1 overflow-y-scroll px-6 pt-24 space-y-4 max-w-3xl mx-auto w-full max-h-[80vh] scrollbar-hide">
                     {messages.map((msg, i) => (
@@ -199,7 +163,7 @@ export default function ChatPage() {
                         <input
                             type="text"
                             className="flex-1 bg-white/10 text-white px-6 py-3 rounded-full focus:outline-none"
-                            placeholder="Ask something about leave, travel, or documents..."
+                            placeholder="Ask about leaves, raise a ticket, or inquire about policies..."
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
@@ -210,7 +174,7 @@ export default function ChatPage() {
                             className="bg-[#FEE715] text-[#101820] px-6 py-3 rounded-full font-bold hover:bg-yellow-400 transition"
                             onClick={sendMessage}
                         >
-                            Send
+                            send
                         </button>
                     </div>
                 </div>

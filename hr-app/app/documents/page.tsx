@@ -1,3 +1,4 @@
+/* app/documents/page.tsx*/ 
 export default function DocumentsPage() {
     const files = [
       { name: "Payslip_March2025.pdf", size: "200KB" },

@@ -1,3 +1,5 @@
+/*app/tickets/page.tsx*/
+
 export default function TicketsPage() {
     const tickets = [
       { id: "#12345", subject: "Leave request approval", status: "Pending" },
