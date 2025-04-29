@@ -1,31 +1,59 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname,useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const [mode, setMode] = useState<'guest' | 'auth' | 'none'>('none');
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+//************************HIDDEN FOR TESTING *************************** */
+useEffect(() => {
+  const token = localStorage.getItem('token');
+  const isLoggedIn = !!token;
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const isLoggedIn = !!token;
+  const isLandingPage = pathname === '/';
+  const isHidden = ['/login', '/register'].includes(pathname);
+  const isChat = pathname === '/chat';
+  const isProfileRelated = ['/profile', '/documents', '/tickets'].includes(pathname);
 
-    const isLandingPage = pathname === '/';
-    const isAuthPage = ['/chat', '/profile', '/documents', '/tickets'].includes(pathname);
-    const isHidden = ['/login'].includes(pathname);
-
-    if (isHidden) {
-      setMode('none');
-    } else if (isLandingPage && !isLoggedIn) {
-      setMode('guest');
-    } else if (isAuthPage && isLoggedIn) {
+  if (isHidden) {
+    setMode('none');
+  } else if (isLandingPage) {
+    if (isLoggedIn) {
       setMode('auth');
     } else {
-      setMode('none');
+      setMode('guest');
     }
-  }, [pathname]);
+  } else if ((isChat || isProfileRelated) && isLoggedIn) {
+    setMode('auth');
+  } else {
+    setMode('none');
+  }
+}, [pathname]);
+
+//******************************************************** */
+
+/*********************************REMOVE AFTER TESTING************* */
+// useEffect(() => {
+//   const isLandingPage = pathname === '/';
+//   const isHidden = ['/login', '/register'].includes(pathname);
+//   const isChat = pathname === '/chat';
+//   const isProfileRelated = ['/profile', '/documents', '/tickets'].includes(pathname);
+
+//   if (isHidden) {
+//     setMode('none');
+//   } else if (isLandingPage) {
+//     setMode('guest');
+//   } else if (isChat || isProfileRelated) {
+//     setMode('auth');
+//   } else {
+//     setMode('none');
+//   }
+// }, [pathname]);
+
+/******************************************************************* */
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -37,15 +65,26 @@ export default function Navbar() {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-4 text-md font-medium bg-[#101820] backdrop-blur-md min-h-[72px]">
-      {/* Logo */}
-      <div className="flex items-center gap-2">
-        <Link href="/" className="flex items-center">
-          <img src="/assets/logo.png" alt="Logo" width={100} height={50} />
-          <span className="ml-2 font-extrabold text-sm">ASK_HR</span>
-        </Link>
+      
+      {/* Left Section: Logo or Back Button */}
+      <div className="flex items-center gap-4">
+        {mode === 'guest' && (
+          <Link href="/" className="flex items-center">
+            <img src="/assets/logo.png" alt="Logo" width={100} height={50} />
+            <span className="ml-2 font-extrabold text-sm">ASK_HR</span>
+          </Link>
+        )}
+        {mode === 'auth' && ['/profile', '/documents', '/tickets'].includes(pathname) && (
+          <button
+            onClick={() => router.push('/chat')}
+            className="text-[#FEE715] hover:underline"
+          >
+            ← Back to Chat
+          </button>
+        )}
       </div>
 
-      {/* Guest Mode */}
+      {/* Guest Mode Right Section */}
       {mode === 'guest' && (
         <div className="flex gap-8 items-center">
           <Link href="/about" className="text-white hover:text-[#FEE715] font-bold transition">About</Link>
@@ -55,7 +94,7 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Authenticated Mode with Dropdown */}
+      {/* Authenticated Profile Dropdown */}
       {mode === 'auth' && (
         <div className="flex items-center gap-2 relative">
           <button
@@ -67,7 +106,6 @@ export default function Navbar() {
               alt="Profile"
               className="w-10 h-10 rounded-full object-cover border-2 border-white/20"
             />
-            <span className="hidden sm:inline text-base font-medium">My Profile</span>
             <svg
               className="w-4 h-4"
               xmlns="http://www.w3.org/2000/svg"

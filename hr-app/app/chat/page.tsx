@@ -89,7 +89,7 @@ export default function ChatPage() {
 
             {/* Sidebar */}
             {/* <aside className={`fixed top-0 left-0 h-full bg-[#101820] w-64 z-30 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} flex flex-col`}> */}
-            <aside className="fixed top-0 left-0 h-full w-64 z-30 bg-black/60 backdrop-blur-md text-white flex flex-col">
+            <aside className="fixed top-[72px] left-0 h-full w-64 z-30 bg-black/40 backdrop-blur-md text-white flex flex-col">
 
                 <div className="px-4 py-1 font-normal border-white/10 flex justify-between items-center">
                     <span>Saved Chats</span>
@@ -141,7 +141,7 @@ export default function ChatPage() {
                 </div>
 
                 {/* Chat Input */}
-                <div className="relative z-10 px-6 py-4 mt-auto">
+                <div className="relative z-10 px-6 py-4">
                     <div className="max-w-3xl mx-auto flex items-center gap-4">
                         {/* Attachment Icon */}
                         <label className="cursor-pointer text-white hover:text-[#FEE715] transition">

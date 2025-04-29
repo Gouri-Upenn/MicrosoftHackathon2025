@@ -27,8 +27,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 
         {/* Blobs / Custom background */}
         {/* Blobs background */}
-        <div className="absolute w-[200px] h-[200px] bg-[#0EA1D2FF] opacity-100 rounded-full z-0" style={{ top: "50%", left: "10%", filter: "blur(250px)" }} />
-        <div className="absolute w-[200px] h-[200px] bg-[#B733E3FF] opacity-100 rounded-full z-0" style={{ top: "30%", left: "50%", filter: "blur(250px)" }} />
+        {/* <div className="absolute w-[200px] h-[200px] bg-[#0EA1D2FF] opacity-100 rounded-full z-0" style={{ top: "50%", left: "10%", filter: "blur(250px)" }} />
+        <div className="absolute w-[200px] h-[200px] bg-[#B733E3FF] opacity-100 rounded-full z-0" style={{ top: "30%", left: "50%", filter: "blur(250px)" }} /> */}
         <Navbar /> {/*Navbar inserted here */}
         <main >{children}</main>
       </body>

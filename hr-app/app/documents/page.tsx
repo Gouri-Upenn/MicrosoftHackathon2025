@@ -1,37 +1,59 @@
-/* app/documents/page.tsx*/ 
+'use client';
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
 export default function DocumentsPage() {
-    const files = [
-      { name: "Payslip_March2025.pdf", size: "200KB" },
-      { name: "LeavePolicy2025.docx", size: "150KB" },
-      { name: "OfferLetter.pdf", size: "300KB" },
-    ];
-  
-    return (
-      <div className="min-h-screen bg-[#101820] text-white flex flex-col p-8">
-        <h1 className="text-3xl font-bold mb-8 text-center">My Documents</h1>
-        <div className="bg-white/10 rounded-lg shadow p-6 max-w-4xl mx-auto space-y-4">
-          {files.map((file, index) => (
-            <div
-              key={index}
-              className="flex justify-between items-center p-4 bg-white/5 rounded-md hover:bg-white/10 transition"
-            >
-              <div className="flex items-center gap-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 text-[#FEE715]"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                <span>{file.name}</span>
-              </div>
-              <span className="text-gray-400">{file.size}</span>
-            </div>
-          ))}
-        </div>
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+  }, [router]);
+
+  const documents = [
+    { name: "Employee Handbook.pdf", uploadedAt: "2023-09-15", status: "Verified" },
+    { name: "NDA Agreement.pdf", uploadedAt: "2023-10-01", status: "Pending" },
+    { name: "Resume_JohnDoe.docx", uploadedAt: "2023-08-21", status: "Rejected" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#101820] text-white flex flex-col p-8">
+      <h1 className="text-3xl font-bold mb-8 text-center">My Documents</h1>
+      <div className="overflow-x-auto max-w-4xl mx-auto">
+        <table className="min-w-full bg-white/10 rounded-lg shadow overflow-hidden">
+          <thead className="bg-white/5">
+            <tr>
+              <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Document Name</th>
+              <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Uploaded At</th>
+              <th className="px-6 py-4 text-left text-sm font-medium text-gray-300">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {documents.map((doc, idx) => (
+              <tr key={idx} className="hover:bg-white/5 transition">
+                <td className="px-6 py-4">{doc.name}</td>
+                <td className="px-6 py-4">{doc.uploadedAt}</td>
+                <td className="px-6 py-4">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                      doc.status === "Verified"
+                        ? "bg-green-500/20 text-green-400"
+                        : doc.status === "Pending"
+                        ? "bg-yellow-500/20 text-yellow-400"
+                        : "bg-red-500/20 text-red-400"
+                    }`}
+                  >
+                    {doc.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    );
-  }
-  
+    </div>
+  );
+}
