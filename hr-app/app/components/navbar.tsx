@@ -10,43 +10,47 @@ export default function Navbar() {
   const router = useRouter();
 //************************HIDDEN FOR TESTING *************************** */
 useEffect(() => {
-  const token = localStorage.getItem('token');
-  const isLoggedIn = !!token;
+  const updateMode = () => {
+    const token = localStorage.getItem('token');
+    const isLoggedIn = !!token;
 
-  const isLandingPage = pathname === '/';
-  const isHidden = ['/login', '/register'].includes(pathname);
-  const isChat = pathname === '/chat';
-  const isProfileRelated = ['/profile', '/documents', '/tickets'].includes(pathname);
+    const isLandingPage = pathname === '/';
+    const isChat = pathname === '/chat';
+    const isAbout = pathname === '/about';
+    const isHidden = ['/login', '/register'].includes(pathname);
+    const isProfileRelated = ['/profile', '/documents', '/tickets'].includes(pathname);
 
-  if (isHidden) {
-    setMode('none');
-  } else if (isLandingPage) {
-    if (isLoggedIn) {
+    if (isHidden) {
+      setMode('none');
+    } else if (isLandingPage || isChat || isAbout) {
+      setMode(isLoggedIn ? 'auth' : 'guest');
+    } else if (isProfileRelated && isLoggedIn) {
       setMode('auth');
     } else {
-      setMode('guest');
+      setMode('none');
     }
-  } else if ((isChat || isProfileRelated) && isLoggedIn) {
-    setMode('auth');
-  } else {
-    setMode('none');
-  }
-}, [pathname]);
+  };
 
+  updateMode(); // Initial run
+  window.addEventListener('auth-change', updateMode); // Listen for login/logout
+
+  return () => window.removeEventListener('auth-change', updateMode); // Cleanup
+}, [pathname]);
 //******************************************************** */
 
 /*********************************REMOVE AFTER TESTING************* */
 // useEffect(() => {
 //   const isLandingPage = pathname === '/';
-//   const isHidden = ['/login', '/register'].includes(pathname);
 //   const isChat = pathname === '/chat';
+//   const isAbout = pathname === '/about'; // Include About page
+//   const isHidden = ['/login', '/register'].includes(pathname);
 //   const isProfileRelated = ['/profile', '/documents', '/tickets'].includes(pathname);
 
 //   if (isHidden) {
 //     setMode('none');
-//   } else if (isLandingPage) {
+//   } else if (isLandingPage || isChat || isAbout) {
 //     setMode('guest');
-//   } else if (isChat || isProfileRelated) {
+//   } else if (isProfileRelated) {
 //     setMode('auth');
 //   } else {
 //     setMode('none');
@@ -64,7 +68,7 @@ useEffect(() => {
   if (mode === 'none') return null;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-4 text-md font-medium bg-[#101820] backdrop-blur-md min-h-[72px]">
+    <nav className="fixed top-0 left-0 right-0 z-50 flex justify-between items-center px-6 py-4 text-md font-medium bg-[#101820]/5 backdrop-blur-md min-h-[72px]">
       
       {/* Left Section: Logo or Back Button */}
       <div className="flex items-center gap-4">

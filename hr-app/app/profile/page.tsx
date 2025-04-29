@@ -68,13 +68,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#101820] text-white flex items-center justify-center p-8 relative">
-      <button
-        onClick={() => router.push('/chat')}
-        className="absolute top-8 left-8 text-[#FEE715] hover:underline"
-      >
-        ← Back to Chat
-      </button>
-
       <div className="bg-white/10 rounded-2xl shadow-lg p-8 max-w-md w-full">
         <div className="flex flex-col items-center space-y-4">
           <div className="relative">

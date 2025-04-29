@@ -6,7 +6,7 @@ const poppins = Poppins({ subsets: ["latin"], weight: ["400", "600", "700"] });
 
 export default function AboutPage() {
   return (
-    <main className={`min-h-screen bg-gradient-to-br from-[#0f172a] to-[#1e293b] text-white ${poppins.className}`}>
+    <main className={`min-h-screen pt-[72px] bg-gradient-to-br from-[#0f172a] to-[#1e293b] text-white ${poppins.className}`}>
       {/* Hero Section */}
       <section className="text-center py-10 px-2">
         <h1 className="text-4xl md:text-6xl font-bold mb-4 text-[#FEE715]">About Us</h1>

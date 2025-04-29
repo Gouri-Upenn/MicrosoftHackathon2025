@@ -29,6 +29,7 @@ export default function LoginPage() {
       const token = data.token;
       if (token) {
         localStorage.setItem('token', token); // Save token to localStorage
+        window.dispatchEvent(new Event("auth-change")); // notify Navbar
         router.push("/profile"); // Redirect after login
       } else {
         throw new Error("No token received");
